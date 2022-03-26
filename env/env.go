@@ -1,5 +1,4 @@
 // Package env holds environment variable constants
-
 package env
 
 const (

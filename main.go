@@ -12,6 +12,8 @@ func main() {
 	cts := controller.NewContainer()
 	sc := service.NewContainer()
 
+	//todo: handle interrupt (Ctrl+C)
+
 	err := server.Start(config.GetServerAddress(), cts, sc)
 	if err != nil {
 		log.Fatal(err)

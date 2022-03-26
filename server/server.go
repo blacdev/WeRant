@@ -10,6 +10,8 @@ import (
 func Start(addr string, cts *controller.Container, sc *service.Container) error {
 	e := echo.New()
 
+	//todo: register logging middleware
+
 	buildRoutes(e, cts)
 
 	if err := e.Start(addr); err != http.ErrServerClosed {
