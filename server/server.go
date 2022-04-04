@@ -22,4 +22,5 @@ func Start(addr string, cts *controller.Container, sc *service.Container) error 
 
 func buildRoutes(e *echo.Echo, cts *controller.Container) {
 	e.GET("/health", controller.Health)
+	e.POST("/user", controller.User)
 }
