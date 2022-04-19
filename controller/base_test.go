@@ -37,3 +37,12 @@ func TestUsernameGenratornotgeneratingSameValueTwice(t *testing.T) {
 		t.Errorf("Expected output to be %s, but got %s", expectedOutput, username)
 	}
 }
+
+func TestPasswordHshin(t *testing.T) {
+	password := "password"
+	hash, _ := HashPassword(password)
+	passwordMatch := CheckPasswordHash(password, hash)
+	if !passwordMatch {
+		t.Errorf("Expected password to match")
+	}
+}
