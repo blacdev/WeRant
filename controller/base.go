@@ -2,6 +2,7 @@ package controller
 
 import (
 	"crypto/rand"
+
 	"io"
 	"net/http"
 	"net/mail"
@@ -11,8 +12,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type response struct {
+	Message string `json:"message"`
+	Userid  string `json:"userid"`
+}
+
 func Health(c echo.Context) error {
-	return c.String(http.StatusOK, "OK")
+	return c.JSON(http.StatusOK, "OK")
 }
 
 func UserRegistration(c echo.Context) error {
@@ -20,36 +26,44 @@ func UserRegistration(c echo.Context) error {
 	password, _ := HashPassword(c.FormValue("password"))
 
 	if email == "" || password == "" {
-		return c.String(http.StatusBadRequest, "email and password are required")
+		c.Response().Header().Set("Content-Type", "application/json")
+		u := response{Message: "email and password are required"}
+		return c.JSON(http.StatusBadRequest, u)
+
 	}
 
 	if !emailIsValid(email) {
-		return c.String(http.StatusBadRequest, "email is invalid")
+		c.Response().Header().Set("Content-Type", "application/json")
+		u := response{Message: "email is invalid"}
+		return c.JSON(http.StatusBadRequest, u)
 	}
 
-	username := userNameGenerator(email, password)
+	username := UserNameGenerator(email, password)
 
-	return c.String(http.StatusOK, "username: "+username)
+	c.Response().Header().Set("Content-Type", "application/json")
+	u := response{Message: "user registered successfully", Userid: username}
+	return c.JSON(http.StatusOK, u)
 }
 
 func UserLogin(c echo.Context) error {
-	username := c.FormValue("email")
+	username := c.FormValue("username")
 	password := c.FormValue("password")
 
 	passwordMatch := CheckPasswordHash(password, "password")
 
 	if username == "" || password == "" {
-		return c.String(http.StatusBadRequest, "email and password are required")
+		return c.JSON(http.StatusBadRequest, response{Message: "username and password are required"})
 	}
 
 	if !passwordMatch {
-		return c.String(http.StatusBadRequest, "password is invalid")
+		// return a json response
+		return c.JSON(http.StatusBadRequest, response{Message: "password is invalid"})
 	}
 
-	return c.String(http.StatusOK, "username: "+username)
+	return c.JSON(http.StatusOK, response{Message: "user logged in successfully", Userid: username})
 }
 
-func userNameGenerator(email, password string) (username string) {
+func UserNameGenerator(email, password string) (username string) {
 	var table = [...]byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 	username = "Ranter-"
 	email = email[:strings.Index(email, "@")]
