@@ -5,7 +5,7 @@ import (
 )
 
 func TestUsernameGenratorLengthofCharacters(t *testing.T) {
-	email := "owoborodeseye@gmail.com"
+	email := "qwertydgfhrjs@gmail.com"
 	password := "password"
 	username := UserNameGenerator(email, password)
 	actualLength := len(username)
